@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── TOKENS ── */
+:root {
+  --bg:      #240321;
+  --ink:     #f0e6d3;
+  --muted:   #a89090;
+  --cyan:    #00f5d4;
+  --magenta: #ff2d78;
+  --gold:    #c9a84c;
+  --surface: #1a0218;
+  --border:  rgba(0, 245, 212, 0.15);
+  --border2: rgba(201, 168, 76, 0.2);
+}
+
+/* ── BASE ── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Space Mono', monospace;
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* ── SCANLINES ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px, rgba(0, 0, 0, 0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 998;
+}
+
+/* ── NOISE ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 997;
+  opacity: 0.5;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+@keyframes glitch {
+  0%, 90%, 100% { transform: translate(0); opacity: 0; }
+  92%   { transform: translate(-2px, 1px); opacity: 0.7; }
+  94%   { transform: translate(2px, -1px); opacity: 0.7; }
+  96%   { transform: translate(0); opacity: 0; }
+  98%   { transform: translate(-1px, 2px); opacity: 0.5; }
+}
+
+@keyframes cardglow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(0,245,212,0.3)) drop-shadow(0 0 20px rgba(201,168,76,0.2)); }
+  50%       { filter: drop-shadow(0 0 20px rgba(0,245,212,0.6)) drop-shadow(0 0 40px rgba(201,168,76,0.3)); }
+}
+
+@keyframes float1 {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(6px); }
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
