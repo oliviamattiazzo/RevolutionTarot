@@ -34,7 +34,7 @@ export default function Hero() {
             letterSpacing: '0.18em', textTransform: 'uppercase',
             color: 'var(--cyan)',
           }}>
-            Revolution Tarot · Sistema ativo
+            Revolution Tarot · Status: ONLINE
           </span>
         </div>
 
@@ -56,7 +56,7 @@ export default function Hero() {
             letterSpacing: '0.14em', textTransform: 'uppercase',
             color: 'var(--muted)',
           }}>
-            {/* Oráculo, Matrix */}
+            {`Oráculo, Matrix Reloaded`}
           </span>
         </div>
 
@@ -90,7 +90,7 @@ export default function Hero() {
           maxWidth: 460,
           marginBottom: 44,
         }}>
-          Sem enrolação. Sem promessa mágica. Uma leitura{' '}
+          Sem enrolação. Sem promessa mágica, mas com muita magia. Uma leitura{' '}
           <em style={{ color: 'var(--ink)', fontStyle: 'normal' }}>direta e acolhedora</em>{' '}
           — pra você entender o que já sente, mas ainda não conseguiu nomear.
         </p>
@@ -165,27 +165,29 @@ export default function Hero() {
               }} />
             ))}
 
-            {/* Carta de tarot */}
+            {/* Foto com efeito glitch ocasional */}
             <div style={{
               position: 'absolute',
               top: '50%', left: '50%',
               transform: 'translate(-50%,-50%)',
-              width: 160, height: 270,
-              background: 'linear-gradient(160deg, #2a0a28 0%, #150113 100%)',
+              width: 300, height: 450,
               border: '1px solid rgba(201,168,76,0.35)',
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-              <div style={{
-                position: 'absolute', inset: 6,
-                border: '1px solid rgba(201,168,76,0.1)',
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', justifyContent: 'center', gap: 14,
-              }}>
-                <span style={{ fontSize: '0.65rem', fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, letterSpacing: '0.3em', color: 'rgba(201,168,76,0.6)' }}>II</span>
-                <span style={{ fontSize: '2.8rem', animation: 'cardglow 3s ease-in-out infinite' }}>🌙</span>
-                <span style={{ fontSize: '0.55rem', fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', letterSpacing: '0.15em', color: 'rgba(201,168,76,0.55)' }}>A Sacerdotisa</span>
-              </div>
+              <img
+                src="/images/photo.jpg"
+                alt="Foto da tarotoga"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  display: 'block',
+                }}
+              />
             </div>
 
             {/* Cantos decorativos */}
@@ -212,8 +214,8 @@ export default function Hero() {
           {/* Badges flutuantes */}
           {[
             { text: '// dev + tarologa',        style: { top: 40,   left: -10 }, anim: 'float1 4s ease-in-out infinite',   color: 'var(--cyan)',    border: 'rgba(0,245,212,0.4)',   bg: 'rgba(0,245,212,0.05)'   },
-            { text: '200+ tiragens',             style: { bottom: 80,right: -16 }, anim: 'float2 5s ease-in-out infinite', color: 'var(--magenta)', border: 'rgba(255,45,120,0.4)',  bg: 'rgba(255,45,120,0.05)'  },
-            { text: 'sem bullshit espiritual',   style: { bottom: 30,left: 4   }, anim: 'float1 5s 1s ease-in-out infinite',color: 'var(--gold)',   border: 'rgba(201,168,76,0.35)', bg: 'rgba(201,168,76,0.05)', font: "'Cormorant Garamond', serif", italic: true },
+            { text: '100+ tiragens',             style: { bottom: 80,right: -16 }, anim: 'float2 5s ease-in-out infinite', color: 'var(--magenta)', border: 'rgba(255,45,120,0.4)',  bg: 'rgba(255,45,120,0.05)'  },
+            { text: 'sem bullshit gratiluz',   style: { bottom: 30,left: 4   }, anim: 'float1 5s 1s ease-in-out infinite',color: 'var(--gold)',   border: 'rgba(201,168,76,0.35)', bg: 'rgba(201,168,76,0.05)', font: "'Cormorant Garamond', serif", italic: true },
           ].map(({ text, style, anim, color, border, bg, font, italic }, i) => (
             <div key={i} style={{
               position: 'absolute', ...style,
