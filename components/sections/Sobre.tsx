@@ -4,10 +4,11 @@ const TAGS = ['Leitura sem frescura', 'Sem julgamentos', 'Foco no entendimento',
 
 const LIST_ITEMS = [
   'Entrega por áudios e fotos, pra você consumir no seu tempo',
-  'Sem enrolação, direto ao ponto',
-  'Abordagem prática e acolhedora',
-  'Palavrão incluso, drama não',
-  'Programadora & tarologa — sem contradição',
+  'Abordagem prática e acolhedora, sem papo enigmático',
+  'Ficou com dúvidas depois da leitura? Tô aqui pra responder',
+  'Zero julgamentos, a moralidade fica lá pro outro lado',
+  'Leituras somente para maiores de 18 anos',
+  'Saúde, morte ou gravidez? Diagnóstico não rola por aqui'
 ]
 
 export default function Sobre() {
@@ -38,16 +39,14 @@ export default function Sobre() {
             </h2>
 
             <p style={{ fontSize: '0.78rem', lineHeight: 1.9, color: 'var(--muted)', marginBottom: 16 }}>
-              Sou programadora de dia e tarologa quando as cartas chamam. Cresci com lógica, código e planilha — e aprendi que{' '}
-              <strong style={{ color: 'var(--ink)', fontWeight: 400 }}>autoconhecimento também tem estrutura.</strong>
+              Programadora de dia. Taróloga quando as cartas chamam.
             </p>
             <p style={{ fontSize: '0.78rem', lineHeight: 1.9, color: 'var(--muted)', marginBottom: 16 }}>
-              Minhas leituras não têm papo vago nem energia genérica. Eu olho pra o que tá ali, digo o que vejo e te ajudo a entender o que você já sente mas ainda não colocou em palavras.
+              Se você acha que tarot é só “sentir”, <strong style={{ color: 'var(--ink)', fontWeight: 400 }}>já começou errado.</strong> E se acha que dá pra viver só na lógica, também.
             </p>
-            <p style={{ fontSize: '0.78rem', lineHeight: 1.9, color: 'var(--muted)' }}>
-              Se você é do tipo que questiona tudo e mesmo assim sente que algo tá travado —{' '}
-              <strong style={{ color: 'var(--ink)', fontWeight: 400 }}>você tá no lugar certo.</strong>
-            </p>
+            <p style={{ fontSize: '0.78rem', lineHeight: 1.9, color: 'var(--muted)', marginBottom: 16 }}>Eu uno os dois: intuição com estrutura, emoção com direção e leitura que você realmente consegue aplicar — <strong style={{ color: 'var(--ink)', fontWeight: 400 }}>não só refletir e esquecer depois.</strong></p>
+            <p style={{ fontSize: '0.78rem', lineHeight: 1.9, color: 'var(--muted)', marginBottom: 16 }}>Se você questiona tudo, mas mesmo assim se sente meio travada, talvez o problema não seja falta de resposta — é falta de direcionamento.</p>
+            <p style={{ fontSize: '0.78rem', lineHeight: 1.9, color: 'var(--muted)', marginBottom: 16 }}><strong style={{ color: 'var(--ink)', fontWeight: 400 }}>E é isso que a gente resolve aqui.</strong></p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 28 }}>
               {TAGS.map(tag => (
@@ -86,10 +85,20 @@ export default function Sobre() {
               fontWeight: 300,
               lineHeight: 1.55,
               color: 'var(--ink)',
+              marginBottom: 12,
+            }}>
+              &quot;Eu só posso lhe mostrar a porta. Você é quem tem que atravessá-la.&quot;
+            </p>
+
+            <span style={{
+              fontSize: '0.6rem', fontWeight: 700,
+              letterSpacing: '0.14em', textTransform: 'uppercase',
+              color: 'var(--muted)',
+              display: 'block',
               marginBottom: 28,
             }}>
-              &quot;Não precisa acreditar em magia. Precisa estar disposta a olhar pra si mesma.&quot;
-            </p>
+              {`// Morpheus, Matrix`}
+            </span>
 
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
               {LIST_ITEMS.map(item => (
