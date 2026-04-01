@@ -417,7 +417,7 @@ function Modal({
             letterSpacing: '0.18em', textTransform: 'uppercase',
             color: 'var(--cyan)', display: 'block', marginBottom: 16,
           }}>
-            // quando faz sentido
+            {`// quando faz sentido`}
           </span>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
