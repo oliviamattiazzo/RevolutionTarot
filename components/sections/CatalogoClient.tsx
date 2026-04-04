@@ -120,12 +120,16 @@ const SIMBOLOS: Record<Moeda, string> = {
 export default function CatalogoClient() {
   const [moeda, setMoeda] = useState<Moeda>('BRL')
   const [modalAberto, setModalAberto] = useState<Consulta | null>(null)
+  const [carrosselIdx, setCarrosselIdx] = useState(0)
 
   function formatarPreco(precoBRL: number): string {
     if (precoBRL === 0) return 'sob consulta'
     const valor = precoBRL * COTACOES[moeda]
     return `${SIMBOLOS[moeda]} ${valor.toLocaleString(moeda === 'BRL' ? 'pt-BR' : 'en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
   }
+
+  const avancar = () => setCarrosselIdx((prev) => (prev + 1) % CONSULTAS.length)
+  const voltar = () => setCarrosselIdx((prev) => (prev - 1 + CONSULTAS.length) % CONSULTAS.length)
 
   return (
     <>
@@ -162,14 +166,89 @@ export default function CatalogoClient() {
         ))}
       </div>
 
-      {/* Grid de cards */}
+      {/* Carrossel Mobile */}
+      <div className="block md:hidden">
+        <div style={{
+          display: 'flex',
+          gap: 12,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 20,
+        }}>
+          <button
+            onClick={voltar}
+            style={{
+              width: 36,
+              height: 36,
+              background: 'rgba(0,245,212,0.1)',
+              border: '1px solid var(--cyan)',
+              color: 'var(--cyan)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 700,
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--cyan)'; e.currentTarget.style.color = 'var(--bg)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,245,212,0.1)'; e.currentTarget.style.color = 'var(--cyan)' }}
+          >
+            ←
+          </button>
+
+          <span style={{
+            fontSize: '0.65rem',
+            fontWeight: 700,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: 'var(--muted)',
+          }}>
+            {carrosselIdx + 1} / {CONSULTAS.length}
+          </span>
+
+          <button
+            onClick={avancar}
+            style={{
+              width: 36,
+              height: 36,
+              background: 'rgba(0,245,212,0.1)',
+              border: '1px solid var(--cyan)',
+              color: 'var(--cyan)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 700,
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--cyan)'; e.currentTarget.style.color = 'var(--bg)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,245,212,0.1)'; e.currentTarget.style.color = 'var(--cyan)' }}
+          >
+            →
+          </button>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          gap: 1,
+          background: 'var(--border)',
+          border: '1px solid var(--border)',
+        }}>
+          <Card
+            consulta={CONSULTAS[carrosselIdx]}
+            preco={formatarPreco(CONSULTAS[carrosselIdx].precoBRL)}
+            onSaibaMais={() => setModalAberto(CONSULTAS[carrosselIdx])}
+          />
+        </div>
+      </div>
+
+      {/* Grid de cards — Desktop */}
       <div style={{
-        display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: 1,
         background: 'var(--border)',
         border: '1px solid var(--border)',
-      }}>
+      }} className="hidden md:grid">
         {CONSULTAS.map(consulta => (
           <Card
             key={consulta.num}

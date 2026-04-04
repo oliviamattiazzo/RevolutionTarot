@@ -32,11 +32,13 @@ export default function Footer() {
     <footer style={{
       background: 'var(--surface)',
       borderTop: '1px solid var(--border)',
-      padding: '28px 48px',
+      padding: 'clamp(20px 16px, 4vw 4vw, 28px 48px)',
       display: 'flex',
+      flexDirection: 'column',
+      gap: 'clamp(16px, 4vw, 24px)',
       justifyContent: 'space-between',
       alignItems: 'center',
-    }}>
+    }} className="md:flex-row">
       <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '1rem', color: 'var(--ink)', fontWeight: 600 }}>
         Revolution <span style={{ color: 'var(--cyan)' }}>Tarot</span>
       </span>

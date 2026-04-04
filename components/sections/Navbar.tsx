@@ -39,6 +39,7 @@ function IconTikTok() {
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -46,12 +47,15 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  const closeMenu = () => setMenuOpen(false)
+
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0,
       zIndex: 200,
-      padding: '0 40px',
-      height: 64,
+      padding: 'clamp(12px, 2vw, 24px) clamp(16px, 4vw, 40px)',
+      height: 'auto',
+      minHeight: 64,
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -64,19 +68,26 @@ export default function Navbar() {
       {/* Logo */}
       <Link href="/" style={{
         fontFamily: "'Cormorant Garamond', serif",
-        fontSize: '1.15rem',
+        fontSize: 'clamp(0.9rem, 2.5vw, 1.15rem)',
         fontStyle: 'italic',
         fontWeight: 600,
         color: 'var(--ink)',
         textDecoration: 'none',
         letterSpacing: '0.04em',
+        whiteSpace: 'nowrap',
       }}>
         Revolution Tarot
         <span style={{ fontSize: '0.6rem', color: 'var(--cyan)', marginLeft: 6, verticalAlign: 'super', fontStyle: 'normal' }}>⊕</span>
       </Link>
 
-      {/* Links centrais */}
-      <ul style={{ display: 'flex', gap: 28, listStyle: 'none', alignItems: 'center' }}>
+      {/* Links centrais — Escondido em mobile */}
+      <ul style={{ 
+        display: 'none',
+        '@media (min-width: 768px)': { display: 'flex' },
+        gap: 28, 
+        listStyle: 'none', 
+        alignItems: 'center' 
+      }} className="hidden md:flex">
         {NAV_LINKS.map(({ label, href }) => (
           <li key={href}>
             <a href={href} style={{
@@ -97,9 +108,9 @@ export default function Navbar() {
         ))}
       </ul>
 
-      {/* Social + CTA */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        <div style={{ display: 'flex', gap: 8 }}>
+      {/* Social + CTA — Escondido em mobile */}
+      <div style={{ display: 'none' }} className="hidden md:flex">
+        <div style={{ display: 'flex', gap: 8, marginRight: 14 }}>
           {[
             { label: 'WhatsApp', icon: <IconWhatsApp />, href: 'http://wa.me/351939189631' },
             { label: 'Instagram', icon: <IconInstagram />, href: 'https://instagram.com/revolution.tarot' },
@@ -141,6 +152,136 @@ export default function Navbar() {
           [ agendar ]
         </a>
       </div>
+
+      {/* Botão Hamburger — Visível apenas em mobile */}
+      <button 
+        onClick={() => setMenuOpen(!menuOpen)}
+        style={{
+          display: menuOpen ? 'none' : 'flex',
+          flexDirection: 'column',
+          gap: 5,
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: 0,
+          zIndex: 201,
+        }}
+        className="md:hidden"
+      >
+        <div style={{ width: 24, height: 2, background: 'var(--cyan)', transition: 'all 0.3s' }} />
+        <div style={{ width: 20, height: 2, background: 'var(--cyan)', transition: 'all 0.3s' }} />
+        <div style={{ width: 24, height: 2, background: 'var(--cyan)', transition: 'all 0.3s' }} />
+      </button>
+
+      {/* Menu Mobile — Overlay */}
+      {menuOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 64,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(36,3,33,0.96)',
+          backdropFilter: 'blur(20px)',
+          zIndex: 199,
+          padding: '32px 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 20,
+          overflowY: 'auto',
+          maxHeight: 'calc(100vh - 64px)',
+        }}>
+          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {NAV_LINKS.map(({ label, href }) => (
+              <li key={href}>
+                <a 
+                  href={href} 
+                  onClick={closeMenu}
+                  style={{
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: 'var(--ink)',
+                    textDecoration: 'none',
+                    display: 'block',
+                    paddingBottom: 8,
+                    borderBottom: '1px solid rgba(0,245,212,0.15)',
+                  }}>
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(0,245,212,0.2)' }}>
+            <a href="#agendar" onClick={closeMenu} style={{
+              background: 'var(--cyan)',
+              color: 'var(--bg)',
+              padding: '12px 20px',
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '0.7rem',
+              fontWeight: 700,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              display: 'inline-block',
+              transition: 'all 0.2s',
+            }}>
+              Agende Sua Leitura
+            </a>
+          </div>
+
+          <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(0,245,212,0.2)' }}>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              {[
+                { label: 'WhatsApp', icon: <IconWhatsApp />, href: 'http://wa.me/351939189631' },
+                { label: 'Instagram', icon: <IconInstagram />, href: 'https://instagram.com/revolution.tarot' },
+                { label: 'TikTok', icon: <IconTikTok />, href: 'https://tiktok.com/@revolution.tarot' },
+              ].map(({ label, icon, href }) => (
+                <a key={label} href={href} aria-label={label} target="_blank" rel="noopener noreferrer" style={{
+                  width: 32, height: 32,
+                  border: '1px solid var(--cyan)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'var(--cyan)',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s',
+                  backgroundColor: 'rgba(0,245,212,0.05)',
+                }}>
+                  {icon}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Botão Fechar — Visível quando menu está aberto */}
+      {menuOpen && (
+        <button 
+          onClick={() => setMenuOpen(false)}
+          style={{
+            position: 'fixed',
+            top: 20,
+            right: 20,
+            width: 32,
+            height: 32,
+            background: 'rgba(0,245,212,0.1)',
+            border: '1px solid var(--cyan)',
+            color: 'var(--cyan)',
+            fontSize: '1.5rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 202,
+            transition: 'all 0.2s',
+          }}
+          className="md:hidden"
+        >
+          ✕
+        </button>
+      )}
     </nav>
   )
 }

@@ -14,16 +14,16 @@ const LIST_ITEMS = [
 export default function Sobre() {
   return (
     <section id="tarologa">
-      <div style={{ maxWidth: 1300, margin: '0 auto', padding: '96px 48px' }}>
+      <div style={{ maxWidth: 1300, margin: '0 auto', padding: 'clamp(60px, 8vw, 96px) clamp(16px, 4vw, 48px)' }}>
         <SectionLabel text="A Taróloga" num="// 01" />
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 80,
+          gridTemplateColumns: '1fr',
+          gap: 'clamp(40px, 8vw, 80px)',
           alignItems: 'start',
           marginTop: 0,
-        }}>
+        }} className="md:grid-cols-2">
           {/* Esquerda */}
           <div>
             <h2 style={{

@@ -1,16 +1,21 @@
 export default function Hero() {
   return (
     <section id="home" style={{
-      minHeight: '100vh',
-      padding: '100px 48px 80px',
+      minHeight: 'calc(100vh - 64px)',
+      paddingTop: 'clamp(40px, 8vw, 100px)',
+      paddingBottom: 'clamp(40px, 8vw, 80px)',
+      paddingLeft: 'clamp(16px, 4vw, 48px)',
+      paddingRight: 'clamp(16px, 4vw, 48px)',
+      marginTop: 64,
       display: 'grid',
-      gridTemplateColumns: '1.1fr 0.9fr',
-      gap: 64,
+      gridTemplateColumns: 'clamp(1fr, 100%, 1.1fr 0.9fr)',
+      gap: 'clamp(32px, 8vw, 64px)',
       alignItems: 'center',
       maxWidth: 1300,
-      margin: '0 auto',
+      margin: '64px auto 0',
       position: 'relative',
-    }}>
+
+    }} className="md:grid-cols-[1.1fr_0.9fr]">
 
       {/* Grid de fundo */}
       <div style={{
@@ -170,7 +175,8 @@ export default function Hero() {
               position: 'absolute',
               top: '50%', left: '50%',
               transform: 'translate(-50%,-50%)',
-              width: 300, height: 450,
+              width: 'clamp(160px, 40vw, 240px)',
+              height: 'clamp(240px, 60vw, 360px)',
               border: '1px solid rgba(201,168,76,0.35)',
               overflow: 'hidden',
               display: 'flex',

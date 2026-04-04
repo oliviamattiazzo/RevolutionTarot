@@ -124,3 +124,126 @@ body::after {
     transform: translate(0);
   }
 }
+
+/* Scrollbar dos mini cards */
+#depoimentos ::-webkit-scrollbar {
+  width: 3px;
+}
+
+#depoimentos ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#depoimentos ::-webkit-scrollbar-thumb {
+  background: rgba(0, 245, 212, 0.3);
+  border-radius: 99px;
+}
+
+#depoimentos ::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan);
+}
+
+/* ── RESPONSIVE MEDIA QUERIES ── */
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  body {
+    cursor: auto;
+  }
+
+  /* Remove scanlines em mobile para performance */
+  body::before {
+    opacity: 0.04;
+  }
+
+  body::after {
+    opacity: 0.3;
+  }
+
+  /* Ajustes de tipografia mobile */
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.02em;
+  }
+
+  /* Espaçamento reduzido */
+  section {
+    padding: clamp(40px, 8vw, 60px) clamp(16px, 4vw, 24px);
+  }
+
+  /* Botões mais tocáveis em mobile */
+  a[href*="#agendar"],
+  button {
+    min-height: 40px;
+    min-width: 40px;
+  }
+
+  /* Melhor espaçamento para links */
+  a {
+    padding: 8px;
+  }
+}
+
+/* Tablet (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  section {
+    padding: clamp(60px, 6vw, 80px) clamp(24px, 5vw, 40px);
+  }
+}
+
+/* Desktop (> 1024px) */
+@media (min-width: 1025px) {
+  section {
+    padding: 96px 48px;
+  }
+
+  body {
+    cursor: crosshair;
+  }
+}
+
+/* ── UTILITY CLASSES PARA RESPONSIVIDADE ── */
+.hidden {
+  display: none !important;
+}
+
+.block {
+  display: block !important;
+}
+
+@media (min-width: 768px) {
+  .hidden {
+    display: none !important;
+  }
+
+  .block {
+    display: block !important;
+  }
+
+  .md\:flex {
+    display: flex !important;
+  }
+
+  .md\:hidden {
+    display: none !important;
+  }
+
+  .md\:flex-row {
+    flex-direction: row !important;
+  }
+
+  .md\:grid {
+    display: grid !important;
+  }
+
+  .md\:grid-cols-2 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .md\:grid-cols-\[1\.1fr_0\.9fr\] {
+    grid-template-columns: 1.1fr 0.9fr !important;
+  }
+
+  .md\:grid-cols-\[1\.2fr_0\.8fr\] {
+    grid-template-columns: 1.2fr 0.8fr !important;
+  }
+}
