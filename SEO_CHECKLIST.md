@@ -68,18 +68,18 @@ TikTok: https://tiktok.com/@revolution.tarot
 ## 🔄 Próximos Passos
 
 ### Imediato
-1. [ ] Criar imagem OG (1200x630px)
+1. [X] Criar imagem OG (1200x630px)
    - Incluir logo + título
    - Usar cores brand (cyan #00f5d4, magenta #ff2d78)
    - Salvar em `/public/images/og-image.jpg`
 
-2. [ ] Testar sitemap em: `https://www.revolutiontarot.com/sitemap.xml`
+2. [X] Testar sitemap em: `https://www.revolutiontarot.com/sitemap.xml`
 
-3. [ ] Testar robots.txt em: `https://www.revolutiontarot.com/robots.txt`
+3. [X] Testar robots.txt em: `https://www.revolutiontarot.com/robots.txt`
 
 ### Curto Prazo
-4. [ ] Submeter sitemap ao Google Search Console
-5. [ ] Submeter sitemap ao Bing Webmaster Tools
+4. [X] Submeter sitemap ao Google Search Console
+5. [X] Submeter sitemap ao Bing Webmaster Tools
 6. [ ] Verificar Core Web Vitals no PageSpeed Insights
 7. [ ] Testar SEO com ferramentas:
    - Google Search Console
