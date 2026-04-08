@@ -1,37 +1,32 @@
 // app/api/checkout/route.ts
-// Cria sessão de pagamento no Stripe
-// Uso: POST /api/checkout  body: { produto: 'tiragem_rapida' }
-
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe, PRODUTOS, ProdutoKey } from '@/lib/stripe'
+import Stripe from 'stripe'
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-04-10',
+})
+
+const COTACOES: Record<string, number> = { BRL: 1, USD: 0.18, EUR: 0.17 }
+const MOEDA_STRIPE: Record<string, string> = { BRL: 'brl', USD: 'usd', EUR: 'eur' }
 
 export async function POST(req: NextRequest) {
-  const { produto } = await req.json() as { produto: ProdutoKey }
+  const { valorBRL, moeda, descricao, email, nome } = await req.json()
 
-  if (!produto || !PRODUTOS[produto]) {
-    return NextResponse.json({ error: 'Produto inválido.' }, { status: 400 })
-  }
+  if (!valorBRL || !moeda || !descricao)
+    return NextResponse.json({ error: 'Dados incompletos.' }, { status: 400 })
 
-  const item = PRODUTOS[produto]
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  const valorNaMoeda = Math.round(valorBRL * COTACOES[moeda] * 100)
 
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    line_items: [
-      {
-        price_data: {
-          currency: 'brl',
-          product_data: { name: item.nome, description: item.descricao },
-          unit_amount: item.preco,
-        },
-        quantity: 1,
-      },
-    ],
-    mode: 'payment',
-    success_url: `${baseUrl}/obrigada?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url:  `${baseUrl}/catalogo`,
-    metadata: { produto },
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: valorNaMoeda,
+    currency: MOEDA_STRIPE[moeda],
+    description: descricao,
+    receipt_email: email || undefined,
+    metadata: { nome: nome || '', moeda },
   })
 
-  return NextResponse.json({ url: session.url })
+  return NextResponse.json({
+    clientSecret: paymentIntent.client_secret,
+    paymentIntentId: paymentIntent.id,
+  })
 }
