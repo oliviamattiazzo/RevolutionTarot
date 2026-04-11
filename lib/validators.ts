@@ -12,7 +12,7 @@ export class ValidationError extends Error {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export function validarEmail(email: string): { valido: boolean; erro?: string } {
+export function validarEmail(email: unknown): { valido: boolean; erro?: string } {
   if (!email || typeof email !== 'string') {
     return { valido: false, erro: 'Email é obrigatório' }
   }
@@ -28,7 +28,7 @@ export function validarEmail(email: string): { valido: boolean; erro?: string } 
 
 // ── Nome ─────────────────────────────────────────────────────────────────────
 
-export function validarNome(nome: string): { valido: boolean; erro?: string } {
+export function validarNome(nome: unknown): { valido: boolean; erro?: string } {
   if (!nome || typeof nome !== 'string') {
     return { valido: false, erro: 'Nome é obrigatório' }
   }
@@ -44,7 +44,7 @@ export function validarNome(nome: string): { valido: boolean; erro?: string } {
 
 // ── Telefone ─────────────────────────────────────────────────────────────────
 
-export function validarTelefone(telefone: string): { valido: boolean; erro?: string } {
+export function validarTelefone(telefone: unknown): { valido: boolean; erro?: string } {
   if (!telefone || typeof telefone !== 'string') {
     return { valido: false, erro: 'Telefone é obrigatório' }
   }
@@ -60,7 +60,7 @@ export function validarTelefone(telefone: string): { valido: boolean; erro?: str
 
 // ── Preço ────────────────────────────────────────────────────────────────────
 
-export function validarPreco(preco: any): { valido: boolean; erro?: string } {
+export function validarPreco(preco: unknown): { valido: boolean; erro?: string } {
   if (preco === null || preco === undefined) {
     return { valido: false, erro: 'Preço é obrigatório' }
   }
@@ -76,7 +76,7 @@ export function validarPreco(preco: any): { valido: boolean; erro?: string } {
 
 // ── Desconto (tipo cupom) ────────────────────────────────────────────────────
 
-export function validarDesconto(desconto: any): { valido: boolean; erro?: string } {
+export function validarDesconto(desconto: unknown): { valido: boolean; erro?: string } {
   const validPrice = validarPreco(desconto)
   if (!validPrice.valido) {
     return validPrice
@@ -90,9 +90,9 @@ export function validarDesconto(desconto: any): { valido: boolean; erro?: string
 
 // ── ID de Moeda ──────────────────────────────────────────────────────────────
 
-export function validarMoeda(moeda: any): { valido: boolean; erro?: string } {
+export function validarMoeda(moeda: unknown): { valido: boolean; erro?: string } {
   const moedas = ['BRL', 'USD', 'EUR']
-  if (!moedas.includes(moeda)) {
+  if (!moedas.includes(String(moeda))) {
     return { valido: false, erro: 'Moeda inválida' }
   }
   return { valido: true }
@@ -100,9 +100,9 @@ export function validarMoeda(moeda: any): { valido: boolean; erro?: string } {
 
 // ── Idioma ───────────────────────────────────────────────────────────────────
 
-export function validarIdioma(idioma: any): { valido: boolean; erro?: string } {
+export function validarIdioma(idioma: unknown): { valido: boolean; erro?: string } {
   const idiomas = ['pt', 'es', 'en']
-  if (!idiomas.includes(idioma)) {
+  if (!idiomas.includes(String(idioma))) {
     return { valido: false, erro: 'Idioma inválido' }
   }
   return { valido: true }
@@ -110,9 +110,9 @@ export function validarIdioma(idioma: any): { valido: boolean; erro?: string } {
 
 // ── Canal de contato ─────────────────────────────────────────────────────────
 
-export function validarCanal(canal: any): { valido: boolean; erro?: string } {
+export function validarCanal(canal: unknown): { valido: boolean; erro?: string } {
   const canais = ['whatsapp', 'telegram']
-  if (!canais.includes(canal)) {
+  if (!canais.includes(String(canal))) {
     return { valido: false, erro: 'Canal de contato inválido' }
   }
   return { valido: true }
@@ -120,9 +120,9 @@ export function validarCanal(canal: any): { valido: boolean; erro?: string } {
 
 // ── Método de pagamento ──────────────────────────────────────────────────────
 
-export function validarMetodoPagamento(metodo: any): { valido: boolean; erro?: string } {
+export function validarMetodoPagamento(metodo: unknown): { valido: boolean; erro?: string } {
   const metodos = ['pix', 'revolut', 'cartao']
-  if (metodo && !metodos.includes(metodo)) {
+  if (metodo && !metodos.includes(String(metodo))) {
     return { valido: false, erro: 'Método de pagamento inválido' }
   }
   return { valido: true }
@@ -130,7 +130,7 @@ export function validarMetodoPagamento(metodo: any): { valido: boolean; erro?: s
 
 // ── Código de Cupom ──────────────────────────────────────────────────────────
 
-export function validarCodigoCupom(codigo: any): { valido: boolean; erro?: string } {
+export function validarCodigoCupom(codigo: unknown): { valido: boolean; erro?: string } {
   if (!codigo || typeof codigo !== 'string') {
     return { valido: false, erro: 'Código do cupom é obrigatório' }
   }
@@ -146,7 +146,7 @@ export function validarCodigoCupom(codigo: any): { valido: boolean; erro?: strin
 
 // ── Nota (observações) ───────────────────────────────────────────────────────
 
-export function validarNota(nota: any): { valido: boolean; erro?: string } {
+export function validarNota(nota: unknown): { valido: boolean; erro?: string } {
   if (nota === null || nota === undefined) return { valido: true } // opcional
   if (typeof nota !== 'string') {
     return { valido: false, erro: 'Nota deve ser texto' }
@@ -159,7 +159,7 @@ export function validarNota(nota: any): { valido: boolean; erro?: string } {
 
 // ── Bundle validation ────────────────────────────────────────────────────────
 
-export function validarCorpoPedidoAgendamento(body: any): {
+export function validarCorpoPedidoAgendamento(body: Record<string, unknown>): {
   valido: boolean
   erros: string[]
 } {

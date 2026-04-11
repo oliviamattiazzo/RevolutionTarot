@@ -6,7 +6,7 @@ export class ApiError extends Error {
     message: string,
     public statusCode: number = 500,
     public code: string = 'INTERNAL_ERROR',
-    public details?: Record<string, any>
+    public details?: Record<string, unknown>
   ) {
     super(message)
     this.name = 'ApiError'
@@ -14,7 +14,7 @@ export class ApiError extends Error {
 }
 
 export class ValidationError extends ApiError {
-  constructor(message: string, details?: Record<string, any>) {
+  constructor(message: string, details?: Record<string, unknown>) {
     super(message, 400, 'VALIDATION_ERROR', details)
     this.name = 'ValidationError'
   }
@@ -54,7 +54,7 @@ interface LogEntry {
   timestamp: string
   level: LogLevel
   message: string
-  data?: Record<string, any>
+  data?: Record<string, unknown>
   error?: string
 }
 
@@ -67,7 +67,7 @@ function formatLogEntry(entry: LogEntry): string {
 }
 
 export const logger = {
-  debug: (message: string, data?: Record<string, any>) => {
+  debug: (message: string, data?: Record<string, unknown>) => {
     if (process.env.NODE_ENV === 'development') {
       const entry: LogEntry = {
         timestamp: new Date().toISOString(),
@@ -78,7 +78,7 @@ export const logger = {
       console.log(formatLogEntry(entry))
     }
   },
-  info: (message: string, data?: Record<string, any>) => {
+  info: (message: string, data?: Record<string, unknown>) => {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
       level: LogLevel.INFO,
@@ -87,7 +87,7 @@ export const logger = {
     }
     console.log(formatLogEntry(entry))
   },
-  warn: (message: string, data?: Record<string, any>) => {
+  warn: (message: string, data?: Record<string, unknown>) => {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
       level: LogLevel.WARN,
@@ -96,7 +96,7 @@ export const logger = {
     }
     console.warn(formatLogEntry(entry))
   },
-  error: (message: string, error?: Error, data?: Record<string, any>) => {
+  error: (message: string, error?: Error, data?: Record<string, unknown>) => {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
       level: LogLevel.ERROR,

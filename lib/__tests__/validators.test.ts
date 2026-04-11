@@ -42,7 +42,7 @@ describe('Validators', () => {
     })
 
     it('deve rejeitar email não-string', () => {
-      const result = validarEmail(123 as any)
+      const result = validarEmail(123 as unknown as string)
       expect(result.valido).toBe(false)
     })
 
@@ -353,6 +353,7 @@ describe('Validators', () => {
     })
 
     it('deve rejeitar corpo sem data', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { dataAgendada, ...body } = validBody
       const result = validarCorpoPedidoAgendamento(body)
       expect(result.valido).toBe(false)
