@@ -175,19 +175,19 @@ export default function Navbar() {
       {menuOpen && (
         <div style={{
           position: 'fixed',
-          top: 64,
+          top: 0,
           left: 0,
           right: 0,
           bottom: 0,
           background: 'rgba(36,3,33,0.96)',
           backdropFilter: 'blur(20px)',
           zIndex: 199,
-          padding: '32px 20px',
+          padding: '80px 20px 32px 20px',
           display: 'flex',
           flexDirection: 'column',
           gap: 20,
           overflowY: 'auto',
-          maxHeight: 'calc(100vh - 64px)',
+          height: '100vh',
         }}>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 16 }}>
             {NAV_LINKS.map(({ label, href }) => (
