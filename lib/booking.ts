@@ -143,6 +143,21 @@ export function formatarPreco(valor: number, moeda: Moeda): string {
 export type Canal = 'whatsapp' | 'telegram'
 export type MetodoPagamento = 'pix' | 'revolut' | 'cartao'
 
+// ── Métodos de pagamento por moeda ────────────────────────────────────────────
+
+export function metodosPorMoeda(moeda: Moeda): MetodoPagamento[] {
+  switch (moeda) {
+    case 'BRL':
+      return ['pix', 'cartao']
+    case 'EUR':
+      return ['revolut', 'cartao']
+    case 'USD':
+      return ['cartao']
+    default:
+      return []
+  }
+}
+
 export interface DadosStep1 {
   tiragemId: string
   idioma: Idioma

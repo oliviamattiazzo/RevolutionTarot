@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import {
   TIRAGENS, IDIOMAS, FUSOS, HORARIOS_AO_VIVO_LISBOA, PERIODOS_URGENCIA,
-  SIMBOLOS,
+  SIMBOLOS, metodosPorMoeda,
   precoComUrgencia, converterPreco, formatarPreco,
   type Moeda, type Idioma, type Canal, type MetodoPagamento,
   type DadosStep1, type DadosStep2, type DadosStep3,
@@ -840,7 +840,7 @@ function Step4({
   desconto: number
   onNext: () => void
   onBack: () => void
-  onMetodo: (m: MetodoPagamento) => void
+  onMetodo: (m: MetodoPagamento | null) => void
   metodo: MetodoPagamento | null
 }) {
   const tiragem = TIRAGENS.find(t => t.id === step1.tiragemId)
@@ -853,6 +853,14 @@ function Step4({
   const [cartao, setCartao] = useState({ numero: '', validade: '', cvv: '' })
   const [carregando, setCarregando] = useState(false)
   const [erroStripe, setErroStripe] = useState('')
+
+  // Métodos disponíveis para a moeda selecionada
+  const metodosDisponiveis = metodosPorMoeda(moeda)
+  
+  // Se o método selecionado deixou de estar disponível, reseta a seleção
+  if (metodo && !metodosDisponiveis.includes(metodo)) {
+    onMetodo(null)
+  }
 
   async function handleCartao() {
     setCarregando(true)
@@ -907,106 +915,112 @@ function Step4({
       <label style={{ ...S.label, marginBottom: 16 }}>Método de pagamento</label>
 
       {/* PIX */}
-      <div
-        onClick={() => onMetodo('pix')}
-        style={{
-          ...S.card,
-          border: `1px solid ${metodo === 'pix' ? 'var(--cyan)' : 'var(--border)'}`,
-          background: metodo === 'pix' ? 'rgba(0,245,212,0.06)' : 'rgba(0,0,0,0.2)',
-          cursor: 'pointer', marginBottom: 8, transition: 'all 0.2s',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: metodo === 'pix' ? 12 : 0 }}>
-          <span>🇧🇷</span>
-          <span style={{ fontWeight: 700, color: metodo === 'pix' ? 'var(--ink)' : 'var(--muted)' }}>Pix</span>
-        </div>
-        {metodo === 'pix' && (
-          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', lineHeight: 1.7 }}>
-            Chave: <span style={{ color: 'var(--ink)', fontFamily: "'Space Mono', monospace" }}>revolutiontarot.byolivia@gmail.com</span>
-            <br />
-            Após o pagamento, envie o comprovante para{' '}
-            <span style={{ color: 'var(--cyan)' }}>+351 939 189 631</span> no WhatsApp.
+      {metodosDisponiveis.includes('pix') && (
+        <div
+          onClick={() => onMetodo('pix')}
+          style={{
+            ...S.card,
+            border: `1px solid ${metodo === 'pix' ? 'var(--cyan)' : 'var(--border)'}`,
+            background: metodo === 'pix' ? 'rgba(0,245,212,0.06)' : 'rgba(0,0,0,0.2)',
+            cursor: 'pointer', marginBottom: 8, transition: 'all 0.2s',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: metodo === 'pix' ? 12 : 0 }}>
+            <span>🇧🇷</span>
+            <span style={{ fontWeight: 700, color: metodo === 'pix' ? 'var(--ink)' : 'var(--muted)' }}>Pix</span>
           </div>
-        )}
-      </div>
+          {metodo === 'pix' && (
+            <div style={{ fontSize: '0.75rem', color: 'var(--muted)', lineHeight: 1.7 }}>
+              Chave: <span style={{ color: 'var(--ink)', fontFamily: "'Space Mono', monospace" }}>revolutiontarot.byolivia@gmail.com</span>
+              <br />
+              Após o pagamento, envie o comprovante para{' '}
+              <span style={{ color: 'var(--cyan)' }}>+351 939 189 631</span> no WhatsApp.
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Revolut */}
-      <div
-        onClick={() => onMetodo('revolut')}
-        style={{
-          ...S.card,
-          border: `1px solid ${metodo === 'revolut' ? 'var(--cyan)' : 'var(--border)'}`,
-          background: metodo === 'revolut' ? 'rgba(0,245,212,0.06)' : 'rgba(0,0,0,0.2)',
-          cursor: 'pointer', marginBottom: 8, transition: 'all 0.2s',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: metodo === 'revolut' ? 12 : 0 }}>
-          <span>🇪🇺</span>
-          <span style={{ fontWeight: 700, color: metodo === 'revolut' ? 'var(--ink)' : 'var(--muted)' }}>Revolut</span>
-        </div>
-        {metodo === 'revolut' && (
-          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', lineHeight: 1.7 }}>
-            @ Revolut: <span style={{ color: 'var(--ink)', fontFamily: "'Space Mono', monospace" }}>@olimattiazzo</span>
-            <br />
-            Após o pagamento, envie o comprovante para{' '}
-            <span style={{ color: 'var(--cyan)' }}>+351 939 189 631</span> no WhatsApp.
+      {metodosDisponiveis.includes('revolut') && (
+        <div
+          onClick={() => onMetodo('revolut')}
+          style={{
+            ...S.card,
+            border: `1px solid ${metodo === 'revolut' ? 'var(--cyan)' : 'var(--border)'}`,
+            background: metodo === 'revolut' ? 'rgba(0,245,212,0.06)' : 'rgba(0,0,0,0.2)',
+            cursor: 'pointer', marginBottom: 8, transition: 'all 0.2s',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: metodo === 'revolut' ? 12 : 0 }}>
+            <span>🇪🇺</span>
+            <span style={{ fontWeight: 700, color: metodo === 'revolut' ? 'var(--ink)' : 'var(--muted)' }}>Revolut</span>
           </div>
-        )}
-      </div>
+          {metodo === 'revolut' && (
+            <div style={{ fontSize: '0.75rem', color: 'var(--muted)', lineHeight: 1.7 }}>
+              @ Revolut: <span style={{ color: 'var(--ink)', fontFamily: "'Space Mono', monospace" }}>@olimattiazzo</span>
+              <br />
+              Após o pagamento, envie o comprovante para{' '}
+              <span style={{ color: 'var(--cyan)' }}>+351 939 189 631</span> no WhatsApp.
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Cartão */}
-      <div
-        style={{
-          ...S.card,
-          border: `1px solid ${metodo === 'cartao' ? 'var(--cyan)' : 'var(--border)'}`,
-          background: metodo === 'cartao' ? 'rgba(0,245,212,0.06)' : 'rgba(0,0,0,0.2)',
-          cursor: 'pointer', marginBottom: 20, transition: 'all 0.2s',
-        }}
-        onClick={() => onMetodo('cartao')}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: metodo === 'cartao' ? 16 : 0 }}>
-          <span>💳</span>
-          <span style={{ fontWeight: 700, color: metodo === 'cartao' ? 'var(--ink)' : 'var(--muted)' }}>
-            Cartão de crédito
-          </span>
-          <span style={{ fontSize: '0.62rem', color: 'var(--muted)', marginLeft: 'auto' }}>
-            processado em {SIMBOLOS[moeda]}
-          </span>
-        </div>
-        {metodo === 'cartao' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }} onClick={e => e.stopPropagation()}>
-            <input
-              style={S.input}
-              type="text"
-              placeholder="Número do cartão"
-              maxLength={19}
-              value={cartao.numero}
-              onChange={e => setCartao(c => ({ ...c, numero: e.target.value }))}
-            />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <input
-                style={S.input}
-                type="text"
-                placeholder="MM/AA"
-                maxLength={5}
-                value={cartao.validade}
-                onChange={e => setCartao(c => ({ ...c, validade: e.target.value }))}
-              />
-              <input
-                style={S.input}
-                type="text"
-                placeholder="CVV"
-                maxLength={4}
-                value={cartao.cvv}
-                onChange={e => setCartao(c => ({ ...c, cvv: e.target.value }))}
-              />
-            </div>
-            {erroStripe && (
-              <div style={{ fontSize: '0.72rem', color: 'var(--magenta)' }}>{erroStripe}</div>
-            )}
+      {metodosDisponiveis.includes('cartao') && (
+        <div
+          style={{
+            ...S.card,
+            border: `1px solid ${metodo === 'cartao' ? 'var(--cyan)' : 'var(--border)'}`,
+            background: metodo === 'cartao' ? 'rgba(0,245,212,0.06)' : 'rgba(0,0,0,0.2)',
+            cursor: 'pointer', marginBottom: 20, transition: 'all 0.2s',
+          }}
+          onClick={() => onMetodo('cartao')}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: metodo === 'cartao' ? 16 : 0 }}>
+            <span>💳</span>
+            <span style={{ fontWeight: 700, color: metodo === 'cartao' ? 'var(--ink)' : 'var(--muted)' }}>
+              Cartão de crédito
+            </span>
+            <span style={{ fontSize: '0.62rem', color: 'var(--muted)', marginLeft: 'auto' }}>
+              processado em {SIMBOLOS[moeda]}
+            </span>
           </div>
-        )}
-      </div>
+          {metodo === 'cartao' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }} onClick={e => e.stopPropagation()}>
+              <input
+                style={S.input}
+                type="text"
+                placeholder="Número do cartão"
+                maxLength={19}
+                value={cartao.numero}
+                onChange={e => setCartao(c => ({ ...c, numero: e.target.value }))}
+              />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <input
+                  style={S.input}
+                  type="text"
+                  placeholder="MM/AA"
+                  maxLength={5}
+                  value={cartao.validade}
+                  onChange={e => setCartao(c => ({ ...c, validade: e.target.value }))}
+                />
+                <input
+                  style={S.input}
+                  type="text"
+                  placeholder="CVV"
+                  maxLength={4}
+                  value={cartao.cvv}
+                  onChange={e => setCartao(c => ({ ...c, cvv: e.target.value }))}
+                />
+              </div>
+              {erroStripe && (
+                <div style={{ fontSize: '0.72rem', color: 'var(--magenta)' }}>{erroStripe}</div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
         <button style={S.btnSecondary} onClick={onBack}>← Voltar</button>
