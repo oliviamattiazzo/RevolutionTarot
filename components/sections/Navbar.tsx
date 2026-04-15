@@ -47,6 +47,19 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    const handleResize = () => {
+      // Fecha o menu quando entra no breakpoint desktop (md: 768px)
+      if (window.innerWidth >= 768) {
+        setMenuOpen(false)
+        // Volta para a homepage
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const closeMenu = () => setMenuOpen(false)
 
   return (
@@ -151,25 +164,26 @@ export default function Navbar() {
         </a>
       </div>
 
-      {/* Botão Hamburger — Visível apenas em mobile */}
-      <button 
-        onClick={() => setMenuOpen(!menuOpen)}
-        style={{
-          display: menuOpen ? 'none' : 'flex',
-          flexDirection: 'column',
-          gap: 5,
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          padding: 0,
-          zIndex: 201,
-        }}
-        className="md:hidden"
-      >
-        <div style={{ width: 24, height: 2, background: 'var(--cyan)', transition: 'all 0.3s' }} />
-        <div style={{ width: 20, height: 2, background: 'var(--cyan)', transition: 'all 0.3s' }} />
-        <div style={{ width: 24, height: 2, background: 'var(--cyan)', transition: 'all 0.3s' }} />
-      </button>
+      {/* Botão Hamburger — Visível apenas em mobile e quando menu está fechado */}
+      {!menuOpen && (
+        <button 
+          onClick={() => setMenuOpen(true)}
+          style={{
+            flexDirection: 'column',
+            gap: 5,
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 0,
+            zIndex: 201,
+          }}
+          className="md:hidden flex"
+        >
+          <div style={{ width: 24, height: 2, background: 'var(--cyan)', transition: 'all 0.3s' }} />
+          <div style={{ width: 20, height: 2, background: 'var(--cyan)', transition: 'all 0.3s' }} />
+          <div style={{ width: 24, height: 2, background: 'var(--cyan)', transition: 'all 0.3s' }} />
+        </button>
+      )}
 
       {/* Menu Mobile — Overlay */}
       {menuOpen && (
