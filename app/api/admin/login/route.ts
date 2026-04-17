@@ -55,13 +55,17 @@ export async function POST(req: NextRequest) {
   logAuditoria('LOGIN_OK', ip)
 
   // Grava cookie httpOnly — o token não sai mais para o cliente
+  const isProd = process.env.NODE_ENV === 'production'
   const res = NextResponse.json({ ok: true }, { headers: headersSeguranca() })
   res.cookies.set(COOKIE_NAME, adminToken, {
-    httpOnly: true,      // JavaScript do browser não pode ler
-    secure:   true,      // Só em HTTPS (Vercel usa sempre HTTPS)
-    sameSite: 'strict',  // Não enviado em requests cross-site
+    httpOnly: true,
+    // Em desenvolvimento (localhost http) secure:false para o browser aceitar o cookie
+    // Em produção (Vercel https) secure:true para segurança máxima
+    secure:   isProd,
+    sameSite: 'strict',
     maxAge:   COOKIE_MAX_AGE,
-    path:     '/',       // Enviado para todas as requisições (protegido por sameSite strict)
+    // path '/' garante que o cookie é enviado tanto em /admin/* como em /api/admin/*
+    path:     '/',
   })
 
   return res

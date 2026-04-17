@@ -73,8 +73,8 @@ export default function HealthcheckClient() {
     setDados(null)
 
     try {
-      // Sem headers de token — a autenticação é feita via cookie httpOnly
-      const res = await fetch('/api/admin/healthcheck')
+      // credentials: 'include' garante que o cookie httpOnly é enviado com o request
+      const res = await fetch('/api/admin/healthcheck', { credentials: 'include' })
 
       if (res.status === 401) {
         // Sessão expirou — redireciona para login
@@ -104,7 +104,7 @@ export default function HealthcheckClient() {
   }, [router])
 
   async function logout() {
-    await fetch('/api/admin/logout', { method: 'POST' })
+    await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' })
     router.push('/admin/login')
   }
 
