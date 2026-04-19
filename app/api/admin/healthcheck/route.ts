@@ -5,14 +5,8 @@
 // O client não precisa saber nem passar nenhum segredo.
 
 import { NextRequest, NextResponse } from 'next/server'
-import {
-  adminAutenticado,
-  rateLimitOk,
-  getIp,
-  logAuditoria,
-  headersSeguranca,
-  VALIDACOES_ENV,
-} from '@/lib/admin-auth'
+const CAL_TOKEN = process.env.CAL_API_KEY!
+const CAL_BASE  = process.env.CAL_API_BASE_URL ?? 'https://api.cal.eu'
 
 export const dynamic = 'force-dynamic'
 
@@ -102,7 +96,7 @@ async function checkCalCom(): Promise<CheckResult[]> {
   // ── Conectividade: GET /v2/me ─────────────────────────────────────────────
   try {
     const { resultado, ms } = await medir(async () => {
-      const res = await fetch('https://api.cal.eu/v2/me', {
+      const res = await fetch(`${CAL_BASE}/v2/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -132,7 +126,7 @@ async function checkCalCom(): Promise<CheckResult[]> {
   // ── Event Types: GET /v2/event-types ─────────────────────────────────────
   try {
     const { resultado } = await medir(async () => {
-      const res = await fetch('https://api.cal.eu/v2/event-types', {
+      const res = await fetch(`${CAL_BASE}/v2/event-types`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

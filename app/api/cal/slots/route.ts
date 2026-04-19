@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const CAL_TOKEN = process.env.CAL_API_KEY!
-const CAL_BASE  = 'https://api.cal.eu/v2'
+const CAL_BASE  = process.env.CAL_API_BASE_URL ?? 'https://api.cal.eu'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   const endTime   = endDate.toISOString().split('T')[0] + 'T00:00:00.000Z'
 
   // v2: GET /v2/slots com query params
-  const url = new URL(`${CAL_BASE}/slots`)
+  const url = new URL(`${CAL_BASE}/v2/slots`)
   url.searchParams.set('eventTypeId', eventTypeId)
   url.searchParams.set('startTime', startTime)
   url.searchParams.set('endTime', endTime)

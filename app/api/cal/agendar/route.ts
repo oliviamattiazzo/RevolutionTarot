@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const CAL_TOKEN = process.env.CAL_API_KEY!
-const CAL_BASE  = 'https://api.cal.eu/v2'
+const CAL_BASE  = process.env.CAL_API_BASE_URL ?? 'https://api.cal.eu'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     ...(nota ? { description: nota } : {}),
   }
 
-  const res  = await fetch(`${CAL_BASE}/bookings`, {
+  const res  = await fetch(`${CAL_BASE}/v2/bookings`, {
     method: 'POST',
     headers: {
       Authorization:    `Bearer ${CAL_TOKEN}`,
