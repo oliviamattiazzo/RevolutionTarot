@@ -48,8 +48,8 @@ export async function GET(req: NextRequest) {
     // v2: GET /v2/slots com query params
     const url = new URL(`${CAL_BASE}/v2/slots`)
     url.searchParams.set('eventTypeId', eventTypeId)
-    url.searchParams.set('startTime', startTime)
-    url.searchParams.set('endTime', endTime)
+    url.searchParams.set('start', startTime)
+    url.searchParams.set('end', endTime)
     url.searchParams.set('timeZone', 'Europe/Lisbon')
 
     logInfo('CALEU_REQUEST_URL', url.toString())
@@ -75,9 +75,9 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // v2 resposta: { status: "success", data: { slots: { "YYYY-MM-DD": [{ time: "..." }] } } }
-    const slots: string[] = (json.data?.slots?.[data] ?? []).map(
-      (s: { time: string }) => s.time
+    // v2 resposta: { status: "success", data: { "YYYY-MM-DD": [{ start: "..." }] } }
+    const slots: string[] = (json.data?.[data] ?? []).map(
+      (s: { start: string }) => s.start
     )
 
     logInfo('SLOTS_EXTRACTED', { count: slots.length, slots: slots.slice(0, 5) })

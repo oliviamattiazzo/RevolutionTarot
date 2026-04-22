@@ -155,6 +155,7 @@ export interface DadosStep2 {
   data: string         // ISO date YYYY-MM-DD
   hora: number | null  // hora Lisboa (null se não for urgente nem ao vivo)
   periodo: string | null // 'Manhã' | 'Tarde' | 'Noite' (urgência não-ao-vivo)
+  slotISO: string | null // slot Cal.eu em UTC (tiragens regulares)
 }
 
 export interface DadosStep3 {

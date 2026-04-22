@@ -66,14 +66,16 @@ export async function POST(req: NextRequest) {
         timeZone: fusoCliente ?? 'Europe/Lisbon',
         language: idioma === 'en' ? 'en' : idioma === 'es' ? 'es' : 'pt',
       },
-      // Campos adicionais passados como metadata
+      // Campos obrigatórios do formulário de booking do event type
+      // "title" é requerido pelo Cal.eu — usamos o nome da tiragem
+      bookingFieldsResponses: {
+        title: tiragem ?? 'Revolution Tarot',
+        ...(nota ? { notes: nota } : {}),
+      },
       metadata: {
         tiragem,
         urgencia: String(urgencia ?? false),
       },
-      // Nota vai como bookingFieldsResponses se o event type tiver campo de notas
-      // Ou como description para aparecer no evento do calendário
-      ...(nota ? { description: nota } : {}),
     }
 
     logInfo('CALEU_REQUEST_PAYLOAD', body)

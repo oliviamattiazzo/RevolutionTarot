@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   TIRAGENS, IDIOMAS, FUSOS, HORARIOS_AO_VIVO_LISBOA, PERIODOS_URGENCIA,
   SIMBOLOS, metodosPorMoeda,
@@ -422,6 +422,43 @@ function Step2({
   const urgencia = step1.urgencia ?? false
   const precoBRL = urgencia ? precoComUrgencia(tiragem?.precoBRL ?? 0) : (tiragem?.precoBRL ?? 0)
   const fuso = FUSOS.find(f => f.tz === (dados.fusoTz ?? 'Europe/Lisbon')) ?? FUSOS[0]
+  const ehRegular = !tiragem?.aoVivo && !urgencia
+
+  const [slots, setSlots] = useState<string[]>([])
+  const [slotsCarregando, setSlotsCarregando] = useState(false)
+  const [slotsErro, setSlotsErro] = useState('')
+
+  useEffect(() => {
+    if (!ehRegular || !dados.data) { setSlots([]); return }
+    const id = CAL_EVENT_TYPES['tiragem-padrao']
+    setSlotsCarregando(true)
+    setSlotsErro('')
+    setSlots([])
+    fetch(`/api/cal/slots?eventTypeId=${id}&data=${dados.data}`)
+      .then(r => r.json())
+      .then(d => {
+        console.log('[CLIENTE_SLOTS] resposta da API:', d)
+        if (d.error) setSlotsErro(d.error)
+        else setSlots(d.slots ?? [])
+      })
+      .catch(() => setSlotsErro('Erro ao buscar horários disponíveis'))
+      .finally(() => setSlotsCarregando(false))
+  }, [dados.data, ehRegular]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Agrupa slots disponíveis em Manhã / Tarde / Noite (hora Lisboa)
+  const slotsPorPeriodo = [
+    { label: 'Manhã', de: 6,  ate: 12 },
+    { label: 'Tarde', de: 12, ate: 18 },
+    { label: 'Noite', de: 18, ate: 24 },
+  ].map(p => {
+    const disponiveis = slots.filter(s => {
+      const h = parseInt(new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Europe/Lisbon', hour: 'numeric', hour12: false,
+      }).format(new Date(s)))
+      return h >= p.de && h < p.ate
+    })
+    return { label: p.label, primeiroSlot: disponiveis[0] ?? null }
+  }).filter(p => p.primeiroSlot !== null)
 
   // Dias permitidos
   const hoje = new Date()
@@ -458,8 +495,8 @@ function Step2({
 
   const dataSel = dados.data ?? null
   const tudo = !!dataSel && (
-    !tiragem?.aoVivo && !urgencia
-      ? true
+    ehRegular
+      ? !!dados.slotISO
       : !!(dados.hora !== null && dados.hora !== undefined) || !!dados.periodo
   )
 
@@ -495,7 +532,7 @@ function Step2({
         <select
           style={S.select}
           value={dados.fusoTz ?? 'Europe/Lisbon'}
-          onChange={e => onChange({ ...dados, fusoTz: e.target.value, hora: null, periodo: null })}
+          onChange={e => onChange({ ...dados, fusoTz: e.target.value, hora: null, periodo: null, slotISO: null })}
         >
           {FUSOS.map(f => (
             <option key={f.tz} value={f.tz}>{f.label}</option>
@@ -532,7 +569,7 @@ function Step2({
                 return (
                   <div
                     key={di}
-                    onClick={() => disponivel && onChange({ ...dados, data: iso, hora: null, periodo: null })}
+                    onClick={() => disponivel && onChange({ ...dados, data: iso, hora: null, periodo: null, slotISO: null })}
                     style={{
                       textAlign: 'center',
                       padding: '10px 4px',
@@ -589,6 +626,55 @@ function Step2({
               )
             })}
           </div>
+        </div>
+      )}
+
+      {/* Slots Cal.eu — Tiragens regulares */}
+      {dataSel && ehRegular && (
+        <div style={S.fieldGroup}>
+          <label style={S.label}>Período preferido (Lisboa)</label>
+          {slotsCarregando && (
+            <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>Buscando horários...</div>
+          )}
+          {slotsErro && (
+            <div style={{ fontSize: '0.72rem', color: 'var(--magenta)' }}>⚠️ {slotsErro}</div>
+          )}
+          {!slotsCarregando && !slotsErro && slotsPorPeriodo.length === 0 && (
+            <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>Nenhum horário disponível para este dia.</div>
+          )}
+          {!slotsCarregando && slotsPorPeriodo.length > 0 && (
+            <>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {slotsPorPeriodo.map(({ label, primeiroSlot }) => {
+                  const sel = dados.slotISO === primeiroSlot
+                  return (
+                    <button
+                      key={label}
+                      onClick={() => onChange({ ...dados, slotISO: primeiroSlot })}
+                      style={{
+                        background: sel ? 'var(--cyan)' : 'transparent',
+                        color: sel ? 'var(--bg)' : 'var(--muted)',
+                        border: `1px solid ${sel ? 'var(--cyan)' : 'var(--border)'}`,
+                        padding: '10px 20px',
+                        fontFamily: "'Space Mono', monospace",
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      {label}
+                    </button>
+                  )
+                })}
+              </div>
+              {dados.slotISO && (
+                <div style={{ fontSize: '0.68rem', color: 'var(--magenta)', marginTop: 10, lineHeight: 1.5 }}>
+                  ⚠️ Horário preferencial — não há garantia de entrega nesse período. A tiragem será entregue com certeza até as 23h de Lisboa do dia selecionado.
+                </div>
+              )}
+            </>
+          )}
         </div>
       )}
 
@@ -1194,6 +1280,18 @@ function Step5({
   )
 }
 
+// Converte hora local de Lisboa (number) + data (YYYY-MM-DD) para ISO UTC
+// Usa Intl para calcular o offset correto incluindo DST automaticamente
+function lisboaHoraParaISO(data: string, horaLisboa: number): string {
+  const probe = new Date(`${data}T12:00:00Z`)
+  const horaProbeEmLisboa = parseInt(
+    new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Lisbon', hour: 'numeric', hour12: false }).format(probe)
+  )
+  const offsetHoras = horaProbeEmLisboa - 12 // +1 no verão, 0 no inverno
+  const horaUTC = ((horaLisboa - offsetHoras) % 24 + 24) % 24
+  return `${data}T${String(horaUTC).padStart(2, '0')}:00:00.000Z`
+}
+
 // ── Função helper: criar evento no Cal.eu ────────────────────────────────
 
 async function criarEventoCaleu(
@@ -1224,18 +1322,16 @@ async function criarEventoCaleu(
       throw new Error(`EventTypeId não configurado para tipo: ${tipoEvento}`)
     }
 
-    // Monta a data/hora no formato ISO-8601 esperado pelo Cal.eu
-    // Step2.data vem em formato "YYYY-MM-DD"
-    // - ao-vivo / urgente: step2.hora contém a hora Lisboa (number)
-    // - tiragem padrão (entrega assíncrona): sem hora específica → usa 23:00 Lisboa
+    // Monta o startTime para o Cal.eu:
+    // - Tiragem regular: usa slotISO retornado pelo /api/cal/slots (já em UTC)
+    // - Ao vivo / urgente: converte hora Lisboa → UTC
     let startTime: string
-
-    if (step2.hora !== null && step2.hora !== undefined) {
-      const hora = String(step2.hora).padStart(2, '0')
-      startTime = `${step2.data}T${hora}:00:00.000Z`
+    if (step2.slotISO) {
+      startTime = step2.slotISO
+    } else if (step2.hora !== null && step2.hora !== undefined) {
+      startTime = lisboaHoraParaISO(step2.data!, step2.hora)
     } else {
-      // Tiragem padrão: entrega até as 23h do dia — usa 23:00 Lisboa como hora do evento
-      startTime = `${step2.data}T23:00:00.000Z`
+      throw new Error('Horário não selecionado')
     }
 
     console.log('[CLIENTE_CAL] Criando evento Cal.eu', {
