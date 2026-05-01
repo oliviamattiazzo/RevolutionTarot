@@ -1,0 +1,63 @@
+name: Weekly Cutoff PR
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'  # Todo domingo às 03:00 UTC
+  workflow_dispatch:       # Permite rodar manualmente também
+
+jobs:
+  create-cutoff-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check if there are differences
+        id: diff
+        run: |
+          git fetch origin
+          COUNT=$(git rev-list --count origin/main..origin/deploy)
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: steps.diff.outputs.count > 0
+        uses: peter-evans/create-pull-request@v6
+        id: pr
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          head: deploy
+          title: '🚀 Cutoff semanal — deploy → main (${{ github.run_id }})'
+          body: |
+            ## Release semanal automático
+
+            Este PR foi criado automaticamente pelo workflow de cutoff.
+
+            - **Branch origem:** `deploy`
+            - **Branch destino:** `main`
+            - **Criado em:** ${{ github.event.repository.full_name }}
+
+            ⚠️ O merge só ocorrerá após todos os checks passarem.
+          labels: cutoff, automated
+
+      - name: Enable auto-merge
+        if: steps.pr.outputs.pull-request-number
+        run: |
+          gh pr merge ${{ steps.pr.outputs.pull-request-number }} \
+            --auto --merge \
+            --repo ${{ github.repository }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify via email (GitHub notification)
+        if: steps.pr.outputs.pull-request-number
+        run: |
+          echo "PR #${{ steps.pr.outputs.pull-request-number }} criado: ${{ steps.pr.outputs.pull-request-url }}"
+
+      - name: No changes to deploy
+        if: steps.diff.outputs.count == '0'
+        run: echo "Nenhuma diferença entre deploy e main. PR não criado."
