@@ -508,7 +508,7 @@ function Step2({
   const dataSel = dados.data ?? null
   const tudo = !!dataSel && (
     ehRegular
-      ? !!dados.slotISO
+      ? !!dados.slotISO || !!dados.periodo
       : !!(dados.hora !== null && dados.hora !== undefined) || !!dados.periodo
   )
 
@@ -678,7 +678,7 @@ function Step2({
               return (
                 <button
                   key={h}
-                  onClick={() => onChange({ ...dados, hora: h })}
+                  onClick={() => onChange({ ...dados, hora: h, periodo: h < 12 ? 'Manhã' : h < 18 ? 'Tarde' : 'Noite' })}
                   style={{
                     background: sel ? 'var(--cyan)' : 'transparent',
                     color: sel ? 'var(--bg)' : 'var(--muted)',
@@ -714,8 +714,37 @@ function Step2({
           {slotsErro && (
             <div style={{ fontSize: '0.72rem', color: 'var(--magenta)' }}>⚠️ {slotsErro}</div>
           )}
-          {!slotsCarregando && !slotsErro && slotsPorPeriodo.length === 0 && (
-            <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>Nenhum horário disponível para este dia.</div>
+          {!slotsCarregando && slotsPorPeriodo.length === 0 && (
+            <div style={{ display: 'flex', gap: 8 }}>
+              {PERIODOS_URGENCIA.map(({ label, horaLisboa }) => {
+                const hLocal = horaLisboa + fuso.offsetLisboa
+                const sel = dados.periodo === label
+                return (
+                  <button
+                    key={label}
+                    onClick={() => onChange({ ...dados, periodo: label, hora: horaLisboa, slotISO: null })}
+                    style={{
+                      background: sel ? 'var(--cyan)' : 'transparent',
+                      color: sel ? 'var(--bg)' : 'var(--muted)',
+                      border: `1px solid ${sel ? 'var(--cyan)' : 'var(--border)'}`,
+                      padding: '10px 20px',
+                      fontFamily: "'Space Mono', monospace",
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    {label}
+                    {fuso.offsetLisboa !== 0 && (
+                      <span style={{ fontSize: '0.6rem', display: 'block', marginTop: 2 }}>
+                        {String(((hLocal % 24) + 24) % 24).padStart(2,'0')}h local
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
           )}
           {!slotsCarregando && slotsPorPeriodo.length > 0 && (
             <>
@@ -743,7 +772,7 @@ function Step2({
                   )
                 })}
               </div>
-              {dados.slotISO && (
+              {(dados.slotISO || dados.periodo) && (
                 <div style={{ fontSize: '0.68rem', color: 'var(--magenta)', marginTop: 10, lineHeight: 1.5 }}>
                   ⚠️ Horário preferencial — não há garantia de entrega nesse período. A tiragem será entregue com certeza até as 23h de Lisboa do dia selecionado.
                 </div>
